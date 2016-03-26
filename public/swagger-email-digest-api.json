@@ -30,7 +30,7 @@
                     }
                 ],
                 "tags": [
-                    "ED"
+                    "Email Digest"
                 ],
                 "responses": {
                     "200": {
@@ -64,7 +64,7 @@
                     }
                 ],
                 "tags": [
-                    "Weather"
+                    "Email Digest"
                 ],
                 "responses": {
                     "200": {

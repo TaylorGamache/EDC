@@ -11,7 +11,7 @@ var me = config.get('CLOUDANT_USERNAME');
 var password = config.get('CLOUDANT_PW');
 var weatherAPIKey = config.get('API_KEY');
 var triggerCallback = "http://nsds-api-stage.mybluemix.net/api/v1/trigger/";
-var httpQueue = require('./http_queue');
+//var httpQueue = require('./http_queue');
 
 var app = express();
 
@@ -24,22 +24,37 @@ cloudant.db.list(function(err, allDbs){
 });
 
 
-var recipesDB = cloudant.db.use('email_digest');
+var db = cloudant.db.use('email_digest');
 var Q = [];
 
 app.use(bodyParser.json());
 // app.use(express.json());
 app.use(express.static(__dirname + '/public'));
+/*
+//Used to find all indexes of db
+db.index(function(er, result) {
+  if (er) {
+    throw er;
+  }
+
+  console.log('The database has %d indexes', result.indexes.length);
+  for (var i = 0; i < result.indexes.length; i++) {
+    console.log('  %s (%s): %j', result.indexes[i].name, result.indexes[i].type, result.indexes[i].def);
+  }
+});
+*/
 
 //Gets all Emails out of the database and puts them in a queue at startup
-recipesDB.find(function(err, result){
+var allDocs = {"selector": { "_id": { "$gt": 0}}};
+db.find(allDocs ,function(err, result){
 	if (err) {
 		throw err;
 	} 
 	console.log('Found %d Email JSONs at startup.', result.docs.length);
     for (var i = 0; i < result.docs.length; i++) {
-		//console.log('Email: %s', result.docs[i].Subject);
-		//console.log('Email: %s', result.docs[i].Body);
+		console.log('Email Number: %d', (i+1));
+		console.log('Email Subject: %s', result.docs[i].Subject);
+		console.log('Email Body: %s', result.docs[i].Body);
 		Q.push(result.docs[i]);
     }
 });
@@ -58,7 +73,7 @@ app.post('/api/v1/emailDigest/queue', function(req, res){
 		res.json({success: false, msg: 'No callback was submitted.'});
 	} else {
 
-		recipesDB.insert(request, function(err, body, header){
+		db.insert(request, function(err, body, header){
 			if(err){
 				res.json({success:false, msg:'Error adding Email action.'});
 			}else{
