@@ -1,0 +1,177 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Email Digest Channel API",
+        "description": "Email Digest Service",
+        "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/api/v1",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/emailDigest/queue": {
+            "post": {
+              "summary": "Add/Update an Email Digest action to the database and put it into a queue.",
+              "description": "This endpoint is used to add an email for the Email Digest service",
+                "parameters": [
+                    {
+                        "name": "Email",
+                        "in": "body",
+                        "description": "Email Digest JSON to be created",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ED"
+                        }
+                    }
+                ],
+                "tags": [
+                    "ED"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success message",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+		"/emailDigest/hit": {
+            "post": {
+              "summary": "Send and Email",
+              "description": "Will delete this endpoint",
+                "parameters": [
+                    {
+                        "name": "weather trigger",
+                        "in": "body",
+                        "description": "weather trigger JSON to be created",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ltWeather"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Weather"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success message",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/emailDigest/{recipeID}": {
+            "delete": {
+                "summary": "Delete a weather trigger",
+                "description": "This endpoint deletes a weather trigger matching the recipeID",
+                "parameters": [
+                    {
+                        "name": "recipeID",
+                        "in": "path",
+                        "description": "Unique identifier of a recipe/weather trigger",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "ED"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success message",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ED": {
+            "properties": {
+				"To": {
+                    "type": "string",
+                    "description": "A list of Emails to send to."
+                },
+				"Subject": {
+                    "type": "string",
+                    "description": "The subject title of the Email."
+                },
+				"Body": {
+                    "type": "string",
+                    "description": "The body of the Email."
+                },
+                "callback": {
+                    "type": "string",
+                    "description": "Callback URL to call when the email gets emailed"
+                }
+            }
+        },
+        "Hit": {
+            "properties": {
+                "Something": {
+                    "type": "integer",
+                    "description": "Value to send."
+                }
+            }
+        },
+
+        "Success": {
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "description": "Whether the request was successful or not"
+                },
+                "msg": {
+                    "type": "string",
+                    "description": "Success or error message"
+                },
+                "email": {
+                    "description": "Email object returned",
+                    "$ref": "#/definitions/ED"
+                }
+            }
+        },
+        "Error": {
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
+
+
