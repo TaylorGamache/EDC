@@ -14,9 +14,9 @@
         "application/json"
     ],
     "paths": {
-        "/emailDigest/queue": {
+        "/emailDigest/new": {
             "post": {
-              "summary": "Add/Update an Email Digest action to the database and put it into a queue.",
+              "summary": "Add/Update an Email Digest action to the database.",
               "description": "This endpoint is used to add an email for the Email Digest service",
                 "parameters": [
                     {
@@ -48,55 +48,21 @@
                 }
             }
         },
-		"/emailDigest/hit": {
-            "post": {
-              "summary": "Send and Email",
-              "description": "Will delete this endpoint",
-                "parameters": [
-                    {
-                        "name": "weather trigger",
-                        "in": "body",
-                        "description": "weather trigger JSON to be created",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ltWeather"
-                        }
-                    }
-                ],
-                "tags": [
-                    "Email Digest"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success message",
-                        "schema": {
-                            "$ref": "#/definitions/Success"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
         "/emailDigest/{recipeID}": {
             "delete": {
-                "summary": "Delete a weather trigger",
-                "description": "This endpoint deletes a weather trigger matching the recipeID",
+                "summary": "Delete a Email Digest Action",
+                "description": "This endpoint deletes an Email Digest Action matching the recipeID",
                 "parameters": [
                     {
                         "name": "recipeID",
                         "in": "path",
-                        "description": "Unique identifier of a recipe/weather trigger",
+                        "description": "Unique identifier of a recipe/Email Digest Action",
                         "required": true,
                         "type": "string"
                     }
                 ],
                 "tags": [
-                    "ED"
+                    "Email Digest"
                 ],
                 "responses": {
                     "200": {
@@ -133,14 +99,54 @@
                 "callback": {
                     "type": "string",
                     "description": "Callback URL to call when the email gets emailed"
+                },
+				"timer": {
+                    "description": "Timer to send the email",
+                    "$ref": "#/definitions/Timer"
                 }
             }
         },
-        "Hit": {
+		"Timer": {
             "properties": {
-                "Something": {
+                "trigger": {
+                    "description": "List of trigger specifications",
+                    "$ref": "#/definitions/Trigger"
+                }
+            }
+        },
+		"Trigger": {
+            "properties": {
+                "repeat": {
                     "type": "integer",
-                    "description": "Value to send."
+                    "description": "Type of trigger"
+                },
+                "hour": {
+                    "type": "integer",
+                    "description": "Type of trigger (0 to 23)"
+                },
+                "min": {
+                    "type": "integer",
+                    "description": "Type of trigger (0 to 59)"
+                },
+                "interval": {
+                    "type": "integer",
+                    "description": "Type of trigger"
+                },
+                "days": {
+                    "type": "integer",
+                    "description": "Type of trigger (0 to 6 - 0 is Sunday)"
+                },
+                "date": {
+                    "type": "integer",
+                    "description": "Type of trigger (1 to 31)"
+                },
+                "month": {
+                    "type": "integer",
+                    "description": "Type of trigger (1 to 12)"
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Type of trigger (America/New_York)"
                 }
             }
         },
