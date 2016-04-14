@@ -44,21 +44,22 @@ db.index(function(er, result) {
 });
 */
 
-/*For sending out emails
-		//Gets all Emails out of the database and puts them in a queue at startup
-		var allDocs = {"selector": { "_id": { "$gt": 0}}};
-		db.find(allDocs ,function(err, result){
-			if (err) {
-				throw err;
-			} 
-			console.log('Found %d Email JSONs at startup.', result.docs.length);
-			for (var i = 0; i < result.docs.length; i++) {
-				console.log('Email Number: %d', (i+1));
-				console.log('Email Subject: %s', result.docs[i].Subject);
-				console.log('Email Body: %s', result.docs[i].Body);
-				Q.push(result.docs[i]);
-			}
-		});*/
+//For sending out emails
+//Gets all Emails out of the database and puts them in a queue at startup
+var allDocs = {"selector": { "_id": { "$gt": 0}}};
+db.find(allDocs ,function(err, result){
+	if (err) {
+		throw err;
+	} 
+	console.log('Found %d Email JSONs at startup.', result.docs.length);
+	for (var i = 0; i < result.docs.length; i++) {
+		//console.log('Email Number: %d', (i+1));
+		//console.log('Email Subject: %s', result.docs[i].Subject);
+		//console.log('Email Body: %s', result.docs[i].Body);
+		Q.push(result.docs[i]);
+	}
+	console.log('Email Digest Channel is up and running.');
+});
 		
 app.delete('/api/v1/emailDigest/:recipeid', function(req, res){
 	var del_ID = req.params.recipeid;
@@ -92,19 +93,31 @@ app.post('/api/v1/emailDigest/new', function(req, res){
 		res.json({success: false, msg: 'No email to send to were submitted.'});
 	} else if (request.callback == "") {
 		res.json({success: false, msg: 'No callback was submitted.'});
-	} else if (request.timer.trigger.timezone == "") {
-		res.json({success: false, msg: 'No timezone was submitted.'});
-	} else if (request.timer.trigger.hour > 23 || request.time.hour < 0) {
-		res.json({success: false, msg: 'Incorrect formatted hour was submitted.'});
-	} else if (request.timer.trigger.min > 59 || request.time.min < 0) {
-		res.json({success: false, msg: 'Incorrect formatted min was submitted.'});
-	} else if (request.timer.trigger.days >6 || request.time.days < 0) {
-		res.json({success: false, msg: 'Incorrect formatted days was submitted.'});
-	} else if (request.timer.trigger.date > 31 || request.time.date < 0) {
-		res.json({success: false, msg: 'Incorrect formatted date was submitted.'});
-	} else if (request.timer.trigger.month > 12 || request.time.month < 1) {
-		res.json({success: false, msg: 'Incorrect formatted month was submitted.'});
-	} else {
+	} else if (request.timer == "day" || request.timer == "week" || request.timer == "month") {
+		res.json({success: false, msg: 'Incorrect timer type was submitted.'});
+	}  else {
+		//Start setting up the Timer recipe
+		var trig = {
+			"recipeID": "string",
+			"callbackURL": "string",
+			"trigger": {
+				"repeat": 0,
+				"hour": 23,
+				"min": 59,
+				"interval": 0,
+				"days": 0,
+				"date": 1,
+				"month": 1,
+				"timezone": "America/New_York"
+			}
+		};
+		if (request.timer == "day") {
+			
+		} else if (request.timer == "week") {
+			
+		} else {
+			
+		}
 		
 		//Insert new Email Digest Action into database
 		db.insert(request, function(err, body, header){
@@ -116,11 +129,11 @@ app.post('/api/v1/emailDigest/new', function(req, res){
 				
 				console.log('New Email Added to Database');
 				//Add a timer
+				//Have not actually set up yet
 				request(requestURL, function(err, response, body){
 					if(!err){
 						console.log("successful response from Timer API!");
 						var parsedbody = JSON.parse(body);
-						var changePercent = parsedbody.ChangePercent;
 					}
 				});
 				
@@ -128,9 +141,32 @@ app.post('/api/v1/emailDigest/new', function(req, res){
 		});
 	}
 });
+
+//I think we need another endpoint for sending emails but they say we do not
  
 //Function for sending email in queue
+//I am not really sure how it works yet, I copied and pasted from what they gave us
 exports.send = function(from, to, subject, body, callback) {
+	
+  var formData = {
+    sendTo: to,
+    from: from,
+    subject: subject,
+    html: body,
+    applicationKey: settings.connect2mail.appKey
+  };
+
+  var jsonData = {
+    method: 'POST',
+    headers: {},
+    url: settings.connect2mail.endpoint,
+    data: formData
+  };
+
+  httpQueue.create(jsonData, function() {
+    callback(null, true);
+    return;
+  });
 
 };
 

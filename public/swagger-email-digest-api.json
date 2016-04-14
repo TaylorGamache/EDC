@@ -101,56 +101,12 @@
                     "description": "Callback URL to call when the email gets emailed"
                 },
 				"timer": {
-                    "description": "Timer to send the email",
-                    "$ref": "#/definitions/Timer"
-                }
-            }
-        },
-		"Timer": {
-            "properties": {
-                "trigger": {
-                    "description": "List of trigger specifications",
-                    "$ref": "#/definitions/Trigger"
-                }
-            }
-        },
-		"Trigger": {
-            "properties": {
-                "repeat": {
-                    "type": "integer",
-                    "description": "Type of trigger"
-                },
-                "hour": {
-                    "type": "integer",
-                    "description": "Type of trigger (0 to 23)"
-                },
-                "min": {
-                    "type": "integer",
-                    "description": "Type of trigger (0 to 59)"
-                },
-                "interval": {
-                    "type": "integer",
-                    "description": "Type of trigger"
-                },
-                "days": {
-                    "type": "integer",
-                    "description": "Type of trigger (0 to 6 - 0 is Sunday)"
-                },
-                "date": {
-                    "type": "integer",
-                    "description": "Type of trigger (1 to 31)"
-                },
-                "month": {
-                    "type": "integer",
-                    "description": "Type of trigger (1 to 12)"
-                },
-                "timezone": {
                     "type": "string",
-                    "description": "Type of trigger (America/New_York)"
+                    "description": "When the email gets emailed. Either day, week, or month."
                 }
             }
         },
-
+		
         "Success": {
             "properties": {
                 "success": {
