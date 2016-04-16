@@ -14,7 +14,69 @@
         "application/json"
     ],
     "paths": {
-        "/emailDigest/new": {
+		"/emailDigest/{recipeID, msg, subject, destination, aggregation}": {
+            "post": {
+                "summary": "Update the queue in the Email Digest Action",
+                "description": "This endpoint changes/adds an email from the Email Digest Action depending on if there is a matching recipeID",
+                "parameters": [
+                    {
+                        "name": "recipeID",
+                        "in": "path",
+                        "description": "Unique identifier of a recipe/Email Digest Action",
+                        "required": true,
+                        "type": "string"
+					}, 
+					{
+                        "name": "msg",
+                        "in": "path",
+                        "description": "The message to be sent in the email",
+                        "required": true,
+                        "type": "string"
+					}, 
+					{
+                        "name": "subject",
+                        "in": "path",
+                        "description": "The subject to be sent in the email",
+                        "required": true,
+                        "type": "string"
+					},
+					{
+                        "name": "destination",
+                        "in": "path",
+                        "description": "The destination(s) of the email",
+                        "required": true,
+                        "type": "string"
+					},
+					{
+                        "name": "aggregation",
+                        "in": "path",
+                        "description": "The time frame to be sent by.",
+                        "required": true,
+                        "type": "string"
+					}
+					
+				],
+					"tags": [
+						"Email Digest"
+					],
+					"responses": {
+						"200": {
+							"description": "Success message",
+							"schema": {
+								"$ref": "#/definitions/Success"
+							}
+						},
+						"default": {
+							"description": "Unexpected error",
+							"schema": {
+								"$ref": "#/definitions/Error"
+							}
+						}
+					}
+				}
+			}
+		},
+        "/temp/new": {
             "post": {
               "summary": "Add/Update an Email Digest action to the database.",
               "description": "This endpoint is used to add an email for the Email Digest service",
@@ -48,10 +110,10 @@
                 }
             }
         },
-        "/emailDigest/{recipeID}": {
-            "delete": {
-                "summary": "Delete a Email Digest Action",
-                "description": "This endpoint deletes an Email Digest Action matching the recipeID",
+        "/temp/send/{recipeID}": {
+            "post": {
+                "summary": "Send an email from the Email Digest Action",
+                "description": "This endpoint sends an email from the Email Digest Action matching the recipeID",
                 "parameters": [
                     {
                         "name": "recipeID",
