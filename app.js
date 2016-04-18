@@ -6,9 +6,13 @@ var request = require('request');
 var Cloudant = require('cloudant');
 var Config = require('config-js');
 var json = require('json');
-var config = new Config('./lifx_config.js');
+var config = new Config('./email_digest_config.js');
+var sendAPI = config.get('SENDGRID_KEY');
+var sendGrid = require('sendgrid')(sendAPI);
 var me = config.get('CLOUDANT_USERNAME');
 var password = config.get('CLOUDANT_PW');
+var weatherAPIKey = config.get('API_KEY');
+var triggerCallback = "http://nsds-api-stage.mybluemix.net/api/v1/trigger/";
 //var httpQueue = require('./http_queue');
 
 var app = express();
