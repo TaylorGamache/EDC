@@ -14,47 +14,47 @@
         "application/json"
     ],
     "paths": {
-		"/emailDigest/{recipeID, msg, subject, destination, aggregation}": {
+		"/emailDigest": {
             "post": {
                 "summary": "Update the queue in the Email Digest Action",
                 "description": "This endpoint changes/adds an email from the Email Digest Action depending on if there is a matching recipeID",
                 "parameters": [
-                    {
-                        "name": "recipeID",
-                        "in": "path",
-                        "description": "Unique identifier of a recipe/Email Digest Action",
-                        "required": true,
-                        "type": "string"
+                    { 
+						"name": "recipeid",
+						"in": "header",
+						"description": "Unique identifier of a recipe/Email Digest Action",
+						"required": true,
+						"type": "string"
 					}, 
 					{
-                        "name": "msg",
-                        "in": "path",
-                        "description": "The message to be sent in the email",
-                        "required": true,
-                        "type": "string"
-					}, 
-					{
-                        "name": "subject",
-                        "in": "path",
-                        "description": "The subject to be sent in the email",
-                        "required": true,
-                        "type": "string"
+						"name": "msg",
+						"in": "header",
+						"description": "The message to be sent in the email",
+						"required": false,
+						"type": "string"
 					},
 					{
-                        "name": "destination",
-                        "in": "path",
-                        "description": "The destination(s) of the email",
-                        "required": true,
-                        "type": "string"
+						"name": "subject",
+						"in": "header",
+						"description": "The subject to be sent in the email",
+						"required": false,
+						"type": "string"
 					},
 					{
-                        "name": "aggregation",
-                        "in": "path",
-                        "description": "The time frame to be sent by.",
-                        "required": true,
-                        "type": "string"
-					}
+						"name": "destination",
+						"in": "header",
+						"description": "The destination(s) of the email",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "aggregation",
+						"in": "header",
+						"description": "The time frame to be sent by. (day, week, or month)",
+						"required": true,
+						"type": "string"
 					
+					}					
 				],
 					"tags": [
 						"Email Digest"
@@ -74,7 +74,7 @@
 						}
 					}
 				}
-			}
+			
 		},
         "/temp/new": {
             "post": {

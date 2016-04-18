@@ -5,9 +5,10 @@ var express = require('express');
 var request = require('request');
 var Cloudant = require('cloudant');
 var Config = require('config-js');
-var sendGrid = require('sendgrid')('YOUR_SENDGRID_API_KEY');
 var json = require('json');
 var config = new Config('./email_digest_config.js');
+var sendAPI = config.get('SENDGRID_KEY');
+var sendGrid = require('sendgrid')(sendAPI);
 var me = config.get('CLOUDANT_USERNAME');
 var password = config.get('CLOUDANT_PW');
 var weatherAPIKey = config.get('API_KEY');
@@ -17,13 +18,6 @@ var triggerCallback = "http://nsds-api-stage.mybluemix.net/api/v1/trigger/";
 var app = express();
 
 var cloudant = Cloudant({account:me, password:password});
-
-// lists all the databases on console
-
-cloudant.db.list(function(err, allDbs){
-	console.log("my dbs: %s", allDbs.join(','))
-});
-
 
 var db = cloudant.db.use('email_digest');
 var Q = [];
@@ -65,14 +59,13 @@ ADD NEW OR UPDATE A RECIPE IN QUEUE
 ***********************************/
 		
 //Endpoint for adding or changing emails in queue
-app.post('/api/v1/emailDigest/:recipeid, msg, subject, destination, aggregation', function(req, res){
-	var ID = req.params.recipeid;
-	var to = req.params.destination;
-	var msg = req.params.msg;
-	var sub = req.params.subject;
-	var aggr = req.params.aggregation;
-	request.timer.callbackURL = "";
-	//request.timer.recipeID = "";
+app.post('/api/v1/emailDigest', function(req, res){
+	//console.log(req.headers.recipeid);
+	var ID = req.headers.recipeid;
+	var to = req.headers.destination;
+	var msg = req.headers.msg;
+	var sub = req.headers.subject;
+	var aggr = req.headers.aggregation;
 	
 	//Makes sure data in JSON is formatted and submitted correctly.
 	if(to == "") {
@@ -88,12 +81,13 @@ app.post('/api/v1/emailDigest/:recipeid, msg, subject, destination, aggregation'
 		var check = true;
 		var exists = false; 
 		while (check) {
-			//console.log(item);
-			if (Q == [] ) {
+			var item = Q.pop();
+			if (item == null ) {
 				check = false;
 			} else  {
-				var item = Q.pop();
 				if (item.id == ID) {
+					console.log(item);
+					console.log("Replaced the above queued message with the submitted message...");
 					exists = true;
 					item.Timer = aggr;
 					item.Email.to = to;
@@ -108,6 +102,7 @@ app.post('/api/v1/emailDigest/:recipeid, msg, subject, destination, aggregation'
 		Q = tempQ;
 		// If ID was not in queue than add it
 		if (exists == false) {
+			console.log("ID not in queue. Added as new message in queue.");
 			var email = {'to':to, 'from': 'Email@Digest.Test', 
 						'subject': sub,'text':msg};
 
@@ -134,7 +129,7 @@ app.post('/api/v1/temp/new', function(req, res){
 		res.json({success: false, msg: 'No email to send to were submitted.'});
 	} else if (request.callback == "") {
 		res.json({success: false, msg: 'No callback was submitted.'});
-	} else if (request.timer == "day" || request.timer == "week" || request.timer == "month") {
+	} else if (request.timer != "day" && request.timer != "week" && request.timer != "month") {
 		res.json({success: false, msg: 'Incorrect timer type was submitted.'});
 	}  else {
 		
@@ -165,17 +160,19 @@ app.post('/api/v1/temp/send/:recipeid', function(req, res){
 	var check = true;
 	var tempQ = Q;
 	while (check) {
-			if (tempQ == [] ) {
+		var item = tempQ.pop();
+		
+		if (item == null ) {
+			check = false;
+			res.json({success: false, msg: 'Failed to find matching recipeID.'});
+		} else {
+			
+			if (item.id == ID) {
 				check = false;
-				res.json({success: false, msg: 'Failed to find matching recipeID.'});
-			} else {
-				var item = tempQ.pop();
-				if (item.id == ID) {
-					check = false;
-					e = item.Email;
-				}
+				e = item.Email;
 			}
 		}
+	}
 	
 	sendGrid.send(e, function(err, json) {
 	if (err) { 
