@@ -1,6 +1,6 @@
 {
-  "name": "weather-monitor",
-  "description": "weather trigger",
+  "name": "Email-Digest-Channel",
+  "description": "Email Digest Action",
   "version": "0.0.1",
   "private": true,
   "scripts": {

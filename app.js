@@ -11,12 +11,7 @@ var sendAPI = config.get('SENDGRID_KEY');
 var sendGrid = require('sendgrid')(sendAPI);
 var me = config.get('CLOUDANT_USERNAME');
 var password = config.get('CLOUDANT_PW');
-var weatherAPIKey = config.get('API_KEY');
-var triggerCallback = "http://nsds-api-stage.mybluemix.net/api/v1/trigger/";
-//var httpQueue = require('./http_queue');
-
 var app = express();
-
 var cloudant = Cloudant({account:me, password:password});
 
 var db = cloudant.db.use('email_digest');
