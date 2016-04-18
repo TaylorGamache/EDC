@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Email Digest Channel API",
-        "description": "Email Digest Service",
+        "title": "LIFx Channel API",
+        "description": "LIFx Service",
         "version": "1.0.0"
     },
     "host": "localhost:3000",
