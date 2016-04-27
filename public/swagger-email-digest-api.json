@@ -19,43 +19,16 @@
                 "summary": "Update the queue in the Email Digest Action",
                 "description": "This endpoint changes/adds an email from the Email Digest Action depending on if there is a matching recipeID",
                 "parameters": [
-                    { 
-						"name": "recipeid",
-						"in": "header",
-						"description": "Unique identifier of a recipe/Email Digest Action",
-						"required": true,
-						"type": "string"
-					}, 
-					{
-						"name": "msg",
-						"in": "header",
-						"description": "The message to be sent in the email",
-						"required": false,
-						"type": "string"
-					},
-					{
-						"name": "subject",
-						"in": "header",
-						"description": "The subject to be sent in the email",
-						"required": false,
-						"type": "string"
-					},
-					{
-						"name": "destination",
-						"in": "header",
-						"description": "The destination(s) of the email",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "aggregation",
-						"in": "header",
-						"description": "The time frame to be sent by. (day, week, or month)",
-						"required": true,
-						"type": "string"
-					
-					}					
-				],
+                    {
+                        "name": "Email Action data to update/create a new recipe.",
+                        "in": "body",
+                        "description": "Email Digest action JSON to be created",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ED"
+                        }
+                    }
+                ],
 					"tags": [
 						"Email Digest"
 					],
@@ -75,100 +48,33 @@
 					}
 				}
 			
-		},
-        "/temp/new": {
-            "post": {
-              "summary": "Add/Update an Email Digest action to the database.",
-              "description": "This endpoint is used to add an email for the Email Digest service",
-                "parameters": [
-                    {
-                        "name": "Email",
-                        "in": "body",
-                        "description": "Email Digest JSON to be created",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ED"
-                        }
-                    }
-                ],
-                "tags": [
-                    "Email Digest"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success message",
-                        "schema": {
-                            "$ref": "#/definitions/Success"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/temp/send/{recipeID}": {
-            "post": {
-                "summary": "Send an email from the Email Digest Action",
-                "description": "This endpoint sends an email from the Email Digest Action matching the recipeID",
-                "parameters": [
-                    {
-                        "name": "recipeID",
-                        "in": "path",
-                        "description": "Unique identifier of a recipe/Email Digest Action",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "tags": [
-                    "Email Digest"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success message",
-                        "schema": {
-                            "$ref": "#/definitions/Success"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        }
+		}
     },
     "definitions": {
-        "ED": {
-            "properties": {
-				"To": {
+		"ED": {
+			"properties": {
+                "to": {
                     "type": "string",
-                    "description": "A list of Emails to send to."
+                    "description": "List of emails to be sent seperated by a comma."
                 },
-				"Subject": {
+				"msg": {
                     "type": "string",
-                    "description": "The subject title of the Email."
+                    "description": "The message of the email."
                 },
-				"Body": {
+				"subject": {
                     "type": "string",
-                    "description": "The body of the Email."
+                    "description": "The sunject of the email."
                 },
-                "callback": {
+				"aggregation": {
                     "type": "string",
-                    "description": "Callback URL to call when the email gets emailed"
+                    "description": "When the email should be sent (day, week, or month)."
                 },
-				"timer": {
+				"recipeID": {
                     "type": "string",
-                    "description": "When the email gets emailed. Either day, week, or month."
+                    "description": "the recipe's ID number."
                 }
-            }
-        },
-		
+			}
+		},
         "Success": {
             "properties": {
                 "success": {
@@ -180,8 +86,9 @@
                     "description": "Success or error message"
                 },
                 "email": {
-                    "description": "Email object returned",
-                    "$ref": "#/definitions/ED"
+                    "description": "Email parameters returned",
+					"$ref": "#/definitions/ED"
+                    
                 }
             }
         },
