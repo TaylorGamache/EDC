@@ -16,7 +16,7 @@ var app = express();
 var cloudant = Cloudant({account:me, password:password});
 var cron = require('cron');
 
-var db = cloudant.db.use('email_digest');
+var db = cloudant.db.use('action_db');
 
 /******
 
@@ -29,6 +29,33 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 console.log('Email Digest Channel is up and running.');
+
+/***************
+
+DELETE END POINT
+
+****************/
+
+app.delete('/api/v1/emailDigest/:recipeid', function(req, res){
+	var del_ID = req.params.recipeid;
+	
+	db.get(del_ID, function(err, data){
+		if(err){
+			res.json({success: false, msg: 'Failed to find the recipe in the database, please try again.'});
+		} else {
+			var rev = data._rev;
+			db.destroy(del_ID, rev,  function(err) {
+				if (!err) {
+					res.json({success: true, msg: 'Successfully deleted the Email Digest action from the database.'});
+					console.log("Successfully deleted doc"+ del_ID);
+				} else {
+					res.json({success: false, msg: 'Failed to delete recipe from the database, please try again.'});
+					//console.log("failed");
+				}
+			});
+		}
+	});
+});
 
 /*************************
 
@@ -92,7 +119,7 @@ app.post('/api/v1/emailDigest', function(req, res){
 		res.json({success: false, msg: 'No email to send to were submitted.'});
 	} /*else if (ID == "") {
 		res.json({success: false, msg: 'No recipeID was submitted.'});
-	}*/ else if (request.timer == "day" || request.timer == "week" || request.timer == "month") {
+	}*/ else if (aggr != "day" && aggr != "week" && aggr != "month") {
 		res.json({success: false, msg: 'Incorrect timer type was submitted.'});
 	}  else {
 		var td = new Date();
