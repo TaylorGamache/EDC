@@ -29,26 +29,58 @@
                         }
                     }
                 ],
-					"tags": [
-						"Email Digest"
-					],
-					"responses": {
-						"200": {
-							"description": "Success message",
-							"schema": {
-								"$ref": "#/definitions/Success"
-							}
-						},
-						"default": {
-							"description": "Unexpected error",
-							"schema": {
-								"$ref": "#/definitions/Error"
-							}
+				"tags": [
+					"Email Digest"
+				],
+				"responses": {
+					"200": {
+						"description": "Success message",
+						"schema": {
+							"$ref": "#/definitions/Success"
+						}
+					},
+					"default": {
+						"description": "Unexpected error",
+						"schema": {
+							"$ref": "#/definitions/Error"
 						}
 					}
 				}
+			}
 			
-		}
+		},
+		"/emailDigest/{recipeID}": {
+            "delete": {
+                "summary": "Delete a email digest action",
+                "description": "This endpoint deletes a email digest action with the matching recipeID",
+                "parameters": [
+                    {
+                        "name": "recipeID",
+                        "in": "path",
+                        "description": "Unique identifier of a recipe/email digest action",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Email Digest"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success message",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
     },
     "definitions": {
 		"ED": {
